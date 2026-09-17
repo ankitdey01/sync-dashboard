@@ -1,131 +1,232 @@
 "use client";
 
 import { useState } from "react";
-import { Copy, Check, CornerDownLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import {
+  Check,
+  Command as CommandIcon,
+  Copy,
+  ListMusic,
+  Play,
+  SlidersHorizontal,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { SectionHeading } from "@/components/site/SectionHeading";
 import { COMMAND_GROUPS } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
-/**
- * TOC + Clothesline-Gallery equivalent:
- * sticky table of contents (left) + command gallery (right).
- * Mobile falls back to shadcn Tabs.
- */
+function GroupIcon({ id, className }: { id: string; className?: string }) {
+  if (id === "music") return <Play aria-hidden="true" className={className} />;
+  if (id === "filter")
+    return <SlidersHorizontal aria-hidden="true" className={className} />;
+  if (id === "playlist")
+    return <ListMusic aria-hidden="true" className={className} />;
+  return <CommandIcon aria-hidden="true" className={className} />;
+}
+
 export function Commands() {
   const [active, setActive] = useState(COMMAND_GROUPS[0].id);
   const [copied, setCopied] = useState<string | null>(null);
 
-  const copy = async (name: string) => {
-    try {
-      await navigator.clipboard.writeText(name);
-      setCopied(name);
-      setTimeout(() => setCopied(null), 1200);
-    } catch {
-      /* clipboard unavailable */
-    }
-  };
+  const total = COMMAND_GROUPS.reduce((n, g) => n + g.commands.length, 0);
 
   const current =
     COMMAND_GROUPS.find((g) => g.id === active) ?? COMMAND_GROUPS[0];
 
-  return (
-    <section id="commands" className="scroll-mt-24 border-y border-zinc-200 bg-zinc-50 py-16 sm:py-24 dark:border-zinc-800 dark:bg-black">
-      <div className="mx-auto w-full max-w-6xl px-5">
-        <SectionHeading
-          eyebrow="Commands"
-          title="Forty commands you'll actually remember."
-          body="Slash-first, grouped the way Discord groups intent. Hover any row to copy it straight into your server."
-        />
+  const copy = async (name: string) => {
+    try {
+      await navigator.clipboard.writeText(name);
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = name;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+    }
+    setCopied(name);
+    window.setTimeout(() => {
+      setCopied((prev) => (prev === name ? null : prev));
+    }, 1400);
+  };
 
-        {/* Mobile: tabs */}
-        <div className="mt-8 md:hidden">
-          <Tabs value={active} onValueChange={setActive}>
-            <TabsList className="w-full justify-start overflow-x-auto">
-              {COMMAND_GROUPS.map((g) => (
-                <TabsTrigger key={g.id} value={g.id} className="dark:text-white">
-                  {g.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            {COMMAND_GROUPS.map((g) => (
-              <TabsContent key={g.id} value={g.id}>
-                <CommandList
-                  groupId={g.id}
-                  copied={copied}
-                  onCopy={copy}
-                />
-              </TabsContent>
-            ))}
-          </Tabs>
+  return (
+    <section
+      id="commands"
+      className="scroll-mt-24 border-y border-zinc-200 bg-zinc-50 py-16 sm:py-24 dark:border-zinc-800 dark:bg-[#0a0a0a]"
+    >
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-5">
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <SectionHeading
+              eyebrow="Commands"
+              title="Forty commands you'll actually remember."
+              body="Slash-first, grouped the way Discord groups intent. Tap any row to copy it straight into your server."
+            />
+            <Badge variant="secondary" className="shrink-0">
+              {total} slash commands
+            </Badge>
+          </div>
         </div>
 
-        {/* Desktop: TOC + gallery */}
-        <div className="mt-10 hidden gap-8 md:grid md:grid-cols-[220px_1fr]">
-          <nav aria-label="Command groups" className="sticky top-24 self-start">
-            <ol className="space-y-1 border-l border-zinc-200 dark:border-zinc-800">
-              {COMMAND_GROUPS.map((g) => (
-                <li key={g.id}>
-                  <Button
-                    variant="ghost"
+        {/* Live region for copy announcements */}
+        <p aria-live="polite" className="sr-only">
+          {copied ? `${copied} copied to clipboard.` : ""}
+        </p>
+
+        {/* Mobile: breadcrumb trail + chip scroller + panel.
+            Plain buttons drive a single panel — avoids the fixed-height
+            Tabs container clipping the chips and the visible scrollbar. */}
+        <div className="mt-6 md:hidden">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="#commands">Commands</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>
+                  {current.label} · {current.commands.length}
+                </BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+
+          <div className="relative -mx-4 mt-3 px-4">
+            <div
+              role="group"
+              aria-label="Command groups"
+              className="flex snap-x gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            >
+              {COMMAND_GROUPS.map((g) => {
+                const isActive = active === g.id;
+                return (
+                  <button
+                    key={g.id}
+                    type="button"
                     onClick={() => setActive(g.id)}
+                    aria-pressed={isActive}
                     className={cn(
-                      "block h-auto w-full justify-start rounded-none border-l-2 -ml-px py-2 pr-2 pl-4 text-left text-sm transition-colors",
-                      active === g.id
-                        ? "border-zinc-950 font-semibold text-zinc-950 dark:border-zinc-50 dark:text-white"
-                        : "border-transparent text-zinc-500 hover:text-zinc-900 dark:text-white dark:hover:text-white"
+                      "flex flex-none snap-start items-center gap-1.5 rounded-full border px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/30",
+                      isActive
+                        ? "border-zinc-950 bg-white text-zinc-950 shadow-xs dark:border-zinc-50 dark:bg-[#0a0a0a] dark:text-white"
+                        : "border-zinc-200 text-zinc-500 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:text-white"
                     )}
                   >
+                    <GroupIcon id={g.id} className="size-4" />
                     {g.label}
-                    <span className="block text-xs font-normal text-zinc-400 dark:text-white">
-                      {g.blurb}
-                    </span>
-                  </Button>
-                </li>
-              ))}
-            </ol>
-            <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-black">
-              <p className="text-xs font-semibold tracking-wide uppercase text-zinc-500 dark:text-white">
-                Try it tonight
-              </p>
-              <p className="mt-1.5 font-mono text-xs leading-5 text-zinc-700 dark:text-white">
-                /play lofi beats
-                <br />
-                /filter nightcore
-                <br />
-                /playlist play study
-              </p>
+                    <Badge variant="secondary" className="-me-1">
+                      {g.commands.length}
+                    </Badge>
+                  </button>
+                );
+              })}
             </div>
-          </nav>
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-y-0 left-0 w-4 bg-gradient-to-r from-zinc-50 to-transparent dark:from-[#0a0a0a]"
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-y-0 right-0 w-4 bg-gradient-to-l from-zinc-50 to-transparent dark:from-[#0a0a0a]"
+            />
+          </div>
 
-          <div
-            key={current.id}
-            className="overflow-hidden rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-black"
-          >
-            <div className="border-b border-zinc-200 px-5 py-4 dark:border-zinc-800">
-              <h3 className="text-sm font-semibold">{current.label}</h3>
-              <p className="text-xs text-zinc-500 dark:text-white">{current.blurb}</p>
-            </div>
-            <CommandList
+          <div className="mt-3">
+            <GroupCard
               groupId={current.id}
               copied={copied}
               onCopy={copy}
             />
           </div>
         </div>
+
+        {/* Desktop: sidebar nav + panel */}
+        <div className="mt-8 hidden gap-6 md:grid md:grid-cols-[248px_minmax(0,1fr)]">
+          <nav
+            aria-label="Command groups"
+            className="sticky top-24 flex flex-col gap-1 self-start"
+          >
+            {COMMAND_GROUPS.map((g) => {
+              const isActive = active === g.id;
+              return (
+                <button
+                  key={g.id}
+                  type="button"
+                  onClick={() => setActive(g.id)}
+                  aria-current={isActive ? "true" : undefined}
+                  className={cn(
+                    "group flex w-full items-start gap-3 rounded-xl border px-3 py-3 text-left transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/30",
+                    isActive
+                      ? "border-border bg-background shadow-xs"
+                      : "border-transparent hover:border-border hover:bg-background/60"
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg border",
+                      isActive
+                        ? "border-zinc-950 bg-zinc-950 text-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
+                        : "border-border bg-muted text-muted-foreground group-hover:text-foreground"
+                    )}
+                  >
+                    <GroupIcon id={g.id} className="size-4" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="flex items-center gap-2">
+                      <span className="text-sm font-medium">{g.label}</span>
+                      <Badge variant="secondary">{g.commands.length}</Badge>
+                    </span>
+                    <span className="mt-0.5 block text-xs leading-5 text-muted-foreground">
+                      {g.blurb}
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
+
+            <div className="mt-3 rounded-xl border border-dashed border-border p-3">
+              <p className="text-xs leading-5 text-muted-foreground">
+                Tip: tap any command to copy it. Paste straight into Discord.
+              </p>
+            </div>
+          </nav>
+
+          <div key={current.id}>
+            <GroupCard groupId={current.id} copied={copied} onCopy={copy} />
+          </div>
+        </div>
+
+        {/* Mobile hint */}
+        <p className="mt-4 text-center text-xs text-muted-foreground md:hidden">
+          Tap any command to copy it into Discord.
+        </p>
       </div>
     </section>
   );
 }
 
-function CommandList({
+function GroupCard({
   groupId,
   copied,
   onCopy,
@@ -135,42 +236,91 @@ function CommandList({
   onCopy: (name: string) => void;
 }) {
   const group = COMMAND_GROUPS.find((g) => g.id === groupId)!;
+
   return (
-    <TooltipProvider>
-      <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
-      {group.commands.map((c) => (
-        <li key={c.name}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                onClick={() => onCopy(c.name)}
-                className="group h-auto w-full justify-between rounded-none px-5 py-3.5 text-left font-normal hover:bg-zinc-50 dark:hover:bg-white/5"
-              >
-            <span className="flex min-w-0 items-center gap-3">
-              <CornerDownLeft className="h-3.5 w-3.5 shrink-0 text-zinc-300 dark:text-white" />
-              <span>
-                <span className="block font-mono text-sm font-medium text-zinc-900 dark:text-white">
-                  {c.name}
-                </span>
-                <span className="block truncate text-xs text-zinc-500 dark:text-white">
-                  {c.desc}
-                </span>
-              </span>
-            </span>
-            <span className="shrink-0 text-zinc-300 group-hover:text-zinc-600 dark:text-white dark:group-hover:text-white">
-              {copied === c.name ? (
-                <Check className="h-4 w-4 text-zinc-900 dark:text-white" />
-              ) : (
-                <Copy className="h-4 w-4" />
-              )}
-            </span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Click to copy</TooltipContent>
-          </Tooltip>
-        </li>
-      ))}
+    <Card className="overflow-hidden border-zinc-200 bg-white py-0 dark:border-zinc-800 dark:bg-[#0a0a0a]">
+      <CardHeader className="flex flex-row items-start gap-3 border-b px-4 py-4 sm:px-5">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-zinc-950 text-white dark:bg-zinc-800 dark:text-white">
+          <GroupIcon id={group.id} className="size-4" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <CardTitle className="flex flex-wrap items-center gap-2 text-[15px]">
+            {group.label}
+            <Badge variant="secondary">{group.commands.length}</Badge>
+          </CardTitle>
+          <CardDescription className="mt-0.5">{group.blurb}</CardDescription>
+        </div>
+      </CardHeader>
+      <CardContent className="px-0">
+        <CommandRows copied={copied} onCopy={onCopy} groupId={group.id} />
+      </CardContent>
+    </Card>
+  );
+}
+
+function CommandRows({
+  groupId,
+  commands,
+  copied,
+  onCopy,
+}: {
+  groupId: string;
+  commands?: { name: string; desc: string }[];
+  copied: string | null;
+  onCopy: (name: string) => void;
+}) {
+  const group = COMMAND_GROUPS.find((g) => g.id === groupId)!;
+  const list = commands ?? group.commands;
+
+  return (
+    <TooltipProvider delayDuration={250}>
+      <ul className="divide-y divide-border">
+        {list.map((c) => {
+          const isCopied = copied === c.name;
+          return (
+            <li key={c.name}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    onClick={() => onCopy(c.name)}
+                    aria-label={`Copy ${c.name}`}
+                    className="group flex min-h-[64px] w-full items-center justify-between gap-3 px-4 py-3.5 text-left transition-colors outline-none hover:bg-muted/60 focus-visible:bg-muted/60 focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-inset active:bg-muted md:min-h-0 sm:px-5"
+                  >
+                    <span className="flex min-w-0 flex-1 items-start gap-3">
+                      <code className="mt-0.5 shrink-0 rounded-md border border-border bg-muted px-1.5 py-0.5 font-mono text-[13px] font-medium text-foreground group-hover:border-foreground/20">
+                        {c.name}
+                      </code>
+                      <span className="min-w-0 flex-1 text-sm leading-5 text-pretty text-muted-foreground">
+                        {c.desc}
+                      </span>
+                    </span>
+                    <span
+                      className={cn(
+                        "flex size-8 shrink-0 items-center justify-center rounded-md border transition-colors",
+                        isCopied
+                          ? "border-zinc-950 bg-zinc-950 text-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
+                          : "border-transparent text-muted-foreground group-hover:border-border group-hover:bg-background group-hover:text-foreground"
+                      )}
+                    >
+                      {isCopied ? (
+                        <Check aria-hidden="true" className="size-4" />
+                      ) : (
+                        <Copy aria-hidden="true" className="size-4" />
+                      )}
+                      <span className="sr-only">
+                        {isCopied ? "Copied" : "Copy"}
+                      </span>
+                    </span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="left">
+                  {isCopied ? "Copied!" : `Copy ${c.name}`}
+                </TooltipContent>
+              </Tooltip>
+            </li>
+          );
+        })}
       </ul>
     </TooltipProvider>
   );

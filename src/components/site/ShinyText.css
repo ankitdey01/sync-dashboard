@@ -1,0 +1,10 @@
+.shiny-text {
+  display: inline-block;
+  --shiny-base: #52525b;
+  --shiny-shine: #ffffff;
+}
+
+.dark .shiny-text {
+  --shiny-base: #a1a1aa;
+  --shiny-shine: #ffffff;
+}

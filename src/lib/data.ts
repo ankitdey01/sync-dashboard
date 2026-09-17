@@ -1,27 +1,16 @@
 export const INVITE_URL =
   "https://discord.com/oauth2/authorize?client_id=1050725403276353557&permissions=36988944&scope=bot+applications.commands";
-export const SUPPORT_URL = "https://discord.gg/syncmusic";
+export const SUPPORT_URL = "https://discord.gg/Bvt89hwNX9";
 export const VOTE_URL = "https://top.gg/bot/1050725403276353557/vote";
 export const REPO_URL =
   "https://github.com/ankitdey01/sync-main-music-bot-djs";
 export const AUTHOR_URL = "https://ankitdey.dev";
 
 export const STATS = [
-  { value: "2,000+", label: "Active servers" },
-  { value: "5", label: "Music platforms" },
+  { value: "1,400+", label: "Active servers" },
+  { value: "5", label: "Music sources" },
   { value: "40+", label: "Slash commands" },
-  { value: "24/7", label: "Lavalink uptime" },
-] as const;
-
-export const PLATFORMS = [
-  "YouTube",
-  "Spotify",
-  "Apple Music",
-  "Deezer",
-  "Facebook",
-  "YouTube Music",
-  "SoundCloud",
-  "Lavalink",
+  { value: "100K+", label: "Users" },
 ] as const;
 
 export type Feature = {
@@ -54,7 +43,7 @@ export const FEATURES: Feature[] = [
   {
     icon: "MousePointerClick",
     title: "Button controls",
-    body: "Pause, skip, loop, volume and grab — directly under Now Playing. Nobody needs to memorise syntax.",
+    body: "Pause, skip, loop, volume and grab,  directly under Now Playing. Nobody needs to memorise syntax.",
   },
   {
     icon: "Activity",
@@ -119,7 +108,7 @@ export const COMMAND_GROUPS: CommandGroup[] = [
     blurb: "Status, help and voting.",
     commands: [
       { name: "/help", desc: "Every command, grouped and searchable" },
-      { name: "/ping", desc: "Latency and node health" },
+      { name: "/ping", desc: "Check bot latency" },
       { name: "/vote", desc: "Support Sync on Top.gg" },
       { name: "/profile", desc: "Your songs played and hours listened" },
     ],
@@ -128,7 +117,7 @@ export const COMMAND_GROUPS: CommandGroup[] = [
 
 export const COMPARISON_ROWS = [
   { label: "Slash commands, no prefix to learn", sync: true, others: false },
-  { label: "Spotify + Apple + Deezer + YouTube", sync: true, others: false },
+  { label: "Multiple music sources in one bot", sync: true, others: false },
   { label: "Button controls under Now Playing", sync: true, others: false },
   { label: "Personal playlists that travel", sync: true, others: false },
   { label: "Audio filters built in", sync: true, others: true },
@@ -143,7 +132,7 @@ export const FAQS = [
   },
   {
     q: "Which sources actually work?",
-    a: "YouTube, Spotify, Apple Music, Deezer and Facebook links, resolved through Lavalink. Paste a track, album, playlist or search text — Sync figures out the rest.",
+    a: "Links from all major platforms, resolved automatically. Paste a track, album, playlist or just search text,  Sync figures out the rest.",
   },
   {
     q: "Is Sync free? What does voting unlock?",
@@ -151,10 +140,10 @@ export const FAQS = [
   },
   {
     q: "Why does music sometimes stutter on other bots?",
-    a: "Most stutter is node overload or region mismatch. Sync runs dedicated Lavalink nodes close to Discord voice regions and exposes /ping so you can verify node health yourself.",
+    a: "Most stutter is node overload or region mismatch. Sync runs dedicated Lavalink nodes close to Discord voice regions.",
   },
   {
     q: "Can I trust it in a 10k-member server?",
-    a: "Sync already serves 2,000+ servers with per-guild queues, DJ-safe button controls and permission-aware commands. Mods keep full control of who can skip, clear or change filters.",
+    a: "Sync already serves 1,400+ servers with per-guild queues, DJ-safe button controls and permission-aware commands. Mods keep full control of who can skip, clear or change filters.",
   },
 ] as const;

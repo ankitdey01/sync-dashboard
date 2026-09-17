@@ -5,14 +5,13 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Grainient from "@/components/site/Grainient";
 import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
-import { INVITE_URL } from "@/lib/data";
 
 export function FinalCta() {
   const reducedMotion = usePrefersReducedMotion();
 
   return (
     <section className="mx-auto w-full max-w-6xl px-5 pb-20">
-      <div className="relative overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-950 px-6 py-14 text-center sm:px-12 dark:border-zinc-800 dark:bg-black">
+      <div className="relative overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-950 px-6 py-14 text-center sm:px-12 dark:border-zinc-800 dark:bg-[#0a0a0a]">
         <div className="absolute inset-0" aria-hidden>
           <Grainient
             color1="#d4d4d8"
@@ -40,16 +39,16 @@ export function FinalCta() {
             Your voice channel is quiet. Fix that tonight.
           </h2>
           <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-white">
-            Join 2,000+ servers. One invite, one /play, music in seconds.
+            Join 1,400+ servers. One invite, one /play, music in seconds.
           </p>
           <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
             <Button
               asChild
               size="lg"
               variant="secondary"
-              className="rounded-full bg-white text-zinc-950 hover:bg-zinc-200"
+              className="rounded-full bg-zinc-950 text-white hover:bg-zinc-950"
             >
-              <a href={INVITE_URL} target="_blank" rel="noreferrer">
+              <a href="/invite" target="_blank" rel="noreferrer">
                 Add Sync to Discord <ArrowUpRight className="h-4 w-4" data-icon="inline-end" />
               </a>
             </Button>
@@ -57,7 +56,7 @@ export function FinalCta() {
               asChild
               size="lg"
               variant="outline"
-              className="rounded-full border-zinc-700 bg-transparent text-white hover:bg-zinc-900 hover:text-white"
+              className="rounded-full border-zinc-500 bg-transparent text-white hover:bg-transparent hover:text-white"
             >
               <a href="#commands">Browse commands first</a>
             </Button>

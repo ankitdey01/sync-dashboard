@@ -1,104 +1,128 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Server, Zap, ShieldCheck } from "lucide-react";
+import dynamic from "next/dynamic";
+import { useMemo, type CSSProperties } from "react";
+import { ShieldCheck, Timer } from "lucide-react";
 import { SectionHeading } from "@/components/site/SectionHeading";
 
-/**
- * TacticalGlobe3D equivalent — deliberately flat.
- * A dotted world suggestion + node health rows. No 3D lib, no glow,
- * keeps the page fast and the aesthetic clean per brief.
- */
-const NODES = [
-  { name: "eu-west · Frankfurt", load: "32%", ping: "18ms", ok: true },
-  { name: "us-east · Virginia", load: "41%", ping: "24ms", ok: true },
-  { name: "ap-south · Mumbai", load: "27%", ping: "21ms", ok: true },
+import type { COBEOptions } from "cobe";
+
+// cobe pulls WebGL onto the page — this section sits below the fold,
+// so split it out of the initial bundle and render on the client only.
+const Globe = dynamic(
+  () => import("@/components/ui/globe").then((mod) => mod.Globe),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        aria-hidden
+        className="aspect-square w-full animate-pulse rounded-full bg-zinc-200/50 dark:bg-zinc-800/50"
+      />
+    ),
+  }
+);
+
+const REGIONS = [
+  { id: "mumbai", label: "Mumbai", location: [19.07, 72.87] as [number, number] },
+  { id: "delhi", label: "Delhi", location: [28.61, 77.2] as [number, number] },
+  { id: "bengaluru", label: "Bengaluru", location: [12.97, 77.59] as [number, number] },
+  { id: "new-york", label: "New York", location: [40.71, -74.0] as [number, number] },
+  { id: "california", label: "California", location: [34.05, -118.24] as [number, number] },
+  { id: "toronto", label: "Toronto", location: [43.65, -79.38] as [number, number] },
+  { id: "sydney", label: "Sydney", location: [-33.87, 151.21] as [number, number] },
+  { id: "dubai", label: "Dubai", location: [25.2, 55.27] as [number, number] },
+  { id: "singapore", label: "Singapore", location: [1.35, 103.82] as [number, number] },
 ];
 
+/**
+ * TacticalGlobe3D equivalent,  deliberately flat.
+ * Hardcoded listener locations around the world. No live data,
+ * keeps the page fast and the aesthetic clean per brief.
+ */
+
 export function GlobeStats() {
+  const globeConfig = useMemo<COBEOptions>(
+    () => ({
+      width: 800,
+      height: 800,
+      devicePixelRatio: 2,
+      phi: 0,
+      theta: 0.25,
+      dark: 0,
+      diffuse: 1.2,
+      mapSamples: 16000,
+      mapBrightness: 6,
+      baseColor: [1, 1, 1],
+      markerColor: [0.15, 0.15, 0.16],
+      glowColor: [1, 1, 1],
+      markers: REGIONS.map((r) => ({
+        location: r.location,
+        size: 0.06,
+        id: r.id,
+      })),
+      arcs: [
+        { from: REGIONS[0].location, to: REGIONS[8].location },
+        { from: REGIONS[1].location, to: REGIONS[7].location },
+        { from: REGIONS[3].location, to: REGIONS[5].location },
+        { from: REGIONS[4].location, to: REGIONS[6].location },
+      ],
+      arcColor: [0.3, 0.3, 0.32],
+      arcWidth: 0.5,
+      arcHeight: 0.3,
+    }),
+    []
+  );
+
   return (
     <section className="mx-auto w-full max-w-6xl px-5 py-16 sm:py-24">
       <div className="grid items-center gap-10 lg:grid-cols-2">
         <div>
           <SectionHeading
-            eyebrow="Network"
-            title="Close to your voice channel, wherever it is."
-            body="Dedicated Lavalink nodes in three regions, picked automatically per guild. /ping shows you the live numbers — Sync doesn't ask you to take stability on faith."
+            eyebrow="Community"
+            title="Listeners all around the world."
+            body="Sync plays in voice channels across India, the US, Canada, Australia, the Gulf, and Southeast Asia. One invite, music in seconds."
           />
-          <ul className="mt-8 space-y-3">
-            {NODES.map((n, i) => (
-              <motion.li
-                key={n.name}
-                initial={{ opacity: 0, x: -12 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.3, delay: i * 0.08 }}
-                className="flex items-center justify-between rounded-xl border border-zinc-200 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-black"
+          <ul className="mt-8 flex flex-wrap gap-2">
+            {REGIONS.map((r) => (
+              <li
+                key={r.id}
+                className="rounded-full border border-zinc-200 bg-white px-3 py-1.5 font-mono text-xs text-zinc-600 dark:border-zinc-800 dark:bg-[#0a0a0a] dark:text-white"
               >
-                <span className="flex items-center gap-3">
-                  <span className="relative flex h-2 w-2">
-                    <span className="absolute h-full w-full animate-ping rounded-full bg-emerald-600 opacity-40" />
-                    <span className="relative h-2 w-2 rounded-full bg-emerald-600" />
-                  </span>
-                  <span className="font-mono text-sm font-medium">{n.name}</span>
-                </span>
-                <span className="font-mono text-xs text-zinc-500 tabular-nums dark:text-white">
-                  load {n.load} · {n.ping}
-                </span>
-              </motion.li>
+                {r.label}
+              </li>
             ))}
           </ul>
           <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-zinc-600 dark:text-white">
             <span className="flex items-center gap-1.5">
-              <Zap className="h-4 w-4" /> Auto region routing
-            </span>
-            <span className="flex items-center gap-1.5">
               <ShieldCheck className="h-4 w-4" /> Isolated per-guild queues
             </span>
             <span className="flex items-center gap-1.5">
-              <Server className="h-4 w-4" /> TypeScript + discord.js v14
+              <Timer className="h-4 w-4" /> Set up in under a minute
             </span>
           </div>
         </div>
 
-        <div
-          className="relative overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-50 p-8 dark:border-zinc-800 dark:bg-black"
-          aria-hidden
-        >
-          <div className="dot-grid absolute inset-0 opacity-70" />
-          <div className="relative mx-auto aspect-square max-w-sm text-zinc-950 dark:text-white">
-            <svg viewBox="0 0 200 200" className="h-full w-full">
-              <circle
-                cx="100"
-                cy="100"
-                r="78"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              />
-              <g strokeWidth="1" fill="none" className="text-zinc-300 dark:text-zinc-700" stroke="currentColor">
-                <ellipse cx="100" cy="100" rx="78" ry="30" />
-                <ellipse cx="100" cy="100" rx="30" ry="78" />
-                <ellipse cx="100" cy="100" rx="60" ry="78" />
-                <line x1="22" y1="100" x2="178" y2="100" />
-              </g>
-              {[
-                [62, 66],
-                [104, 52],
-                [138, 84],
-                [84, 112],
-                [120, 128],
-                [58, 132],
-              ].map(([x, y], i) => (
-                <g key={i}>
-                  <circle cx={x} cy={y} r="5" fill="currentColor" />
-                  <circle cx={x} cy={y} r="9" fill="none" stroke="currentColor" strokeOpacity="0.2" />
-                </g>
-              ))}
-            </svg>
+        <div className="relative overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-50 p-8 dark:border-zinc-800 dark:bg-[#0a0a0a]">
+          <div className="relative mx-auto aspect-square w-full max-w-sm">
+            <Globe config={globeConfig} />
+            {REGIONS.map((r) => (
+              <div
+                key={r.id}
+                aria-hidden
+                className="pointer-events-none absolute bottom-[anchor(top)] left-[anchor(center)] z-10 mb-2 -translate-x-1/2 rounded-md border border-zinc-200 bg-white px-1.5 py-0.5 font-mono text-[10px] font-semibold whitespace-nowrap text-zinc-900 opacity-0 shadow-sm transition-opacity duration-300"
+                style={
+                  {
+                    positionAnchor: `--cobe-${r.id}`,
+                    opacity: `var(--cobe-visible-${r.id}, 0)`,
+                  } as CSSProperties
+                }
+              >
+                {r.label}
+              </div>
+            ))}
           </div>
           <p className="relative mt-4 text-center font-mono text-xs text-zinc-500 dark:text-white">
-            Illustrative status — run /ping in Discord for live numbers
+            drag to spin
           </p>
         </div>
       </div>

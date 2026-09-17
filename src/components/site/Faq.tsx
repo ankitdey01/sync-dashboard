@@ -9,7 +9,7 @@ import { FAQS } from "@/lib/data";
 
 export function Faq() {
   return (
-    <section id="faq" className="scroll-mt-24 border-t border-zinc-200 bg-zinc-50 py-16 sm:py-24 dark:border-zinc-800 dark:bg-black">
+    <section id="faq" className="scroll-mt-24 border-t border-zinc-200 bg-zinc-50 py-16 sm:py-24 dark:border-zinc-800 dark:bg-[#0a0a0a]">
       <div className="mx-auto grid w-full max-w-6xl gap-10 px-5 lg:grid-cols-[1fr_1.4fr]">
         <SectionHeading
           eyebrow="FAQ"

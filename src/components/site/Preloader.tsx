@@ -17,7 +17,7 @@ export function Preloader() {
     <AnimatePresence>
       {!done && (
         <motion.div
-          className="fixed inset-0 z-100 flex items-center justify-center bg-white dark:bg-black"
+          className="fixed inset-0 z-100 flex items-center justify-center bg-white dark:bg-[#0a0a0a]"
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
           aria-hidden
@@ -36,7 +36,7 @@ export function Preloader() {
               className="h-14 w-14 rounded-full"
               priority
             />
-            <div className="h-1 w-24 overflow-hidden rounded-full bg-zinc-100 dark:bg-black">
+            <div className="h-1 w-24 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
               <motion.div
                 className="h-full w-full origin-left bg-zinc-950 dark:bg-zinc-50"
                 initial={{ scaleX: 0 }}

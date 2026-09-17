@@ -9,12 +9,12 @@ export function Compare() {
       <SectionHeading
         eyebrow="Compare"
         title="The boring checklist that actually matters."
-        body="Most music bots play audio. The difference is everything around it — sources, controls, playlists and who pays for basics."
+        body="Most music bots play audio. The difference is everything around it,  sources, controls, playlists and who pays for basics."
       />
       <div className="mt-10 overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800">
         <table className="w-full text-left text-sm">
           <thead>
-            <tr className="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-black">
+            <tr className="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-[#0a0a0a]">
               <th className="px-5 py-3.5 font-medium text-zinc-500 dark:text-white">Capability</th>
               <th className="w-32 px-5 py-3.5 text-center font-semibold">Sync</th>
               <th className="w-32 px-5 py-3.5 text-center font-medium text-zinc-500 dark:text-white">
@@ -22,7 +22,7 @@ export function Compare() {
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-zinc-100 bg-white dark:divide-zinc-800 dark:bg-black">
+          <tbody className="divide-y divide-zinc-100 bg-white dark:divide-zinc-800 dark:bg-[#0a0a0a]">
             {COMPARISON_ROWS.map((r) => (
               <tr key={r.label} className="hover:bg-zinc-50/60 dark:hover:bg-white/5">
                 <td className="px-5 py-3.5">{r.label}</td>

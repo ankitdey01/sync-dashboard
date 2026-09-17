@@ -1,41 +1,72 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowUpRight, ChevronDown, Menu } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
+import { MenuIcon } from "@/components/ui/icons-menu";
 import { Show, SignInButton, UserButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-  SheetClose,
-} from "@/components/ui/sheet";
-import { ModeToggle } from "@/components/mode-toggle";
-import { INVITE_URL } from "@/lib/data";
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
+import { cn } from "@/lib/utils";
 
-const FEATURE_LINKS = [
-  { href: "#features", title: "Playback", desc: "Multi-platform Lavalink audio" },
-  { href: "#commands", title: "Commands", desc: "40+ slash commands, grouped" },
-  { href: "#compare", title: "Compare", desc: "Sync vs generic music bots" },
-  { href: "#faq", title: "FAQ", desc: "Setup, sources and voting" },
+type NavLink = { href: string; label: string; external?: boolean };
+
+const PLAIN_LINKS: NavLink[] = [
+  { href: "/#commands", label: "Commands" },
+  { href: "/#compare", label: "Compare" },
+  { href: "/#faq", label: "FAQ" },
+  { href: "/#premium", label: "Premium" },
+  { href: "/support", label: "Support", external: true },
 ];
 
-/** Pill-Dropdown-Nav + HamburgerMenu equivalent, built on shadcn primitives. */
+const MOBILE_LINKS: NavLink[] = [
+  { href: "/#features", label: "Features" },
+  { href: "/#commands", label: "Commands" },
+  { href: "/#compare", label: "Compare" },
+  { href: "/#faq", label: "FAQ" },
+  { href: "/#premium", label: "Premium" },
+  { href: "/support", label: "Support server", external: true },
+];
+
+/** Pill navbar with a local (no-portal) mobile dropdown so the
+ *  hamburger -> X morph is never covered by an overlay. */
 export function SiteNav() {
+  const [open, setOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open ]);
+
+  React.useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth >= 768) setOpen(false);
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   return (
-    <header className="fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-4">
+    <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4">
       <nav
         aria-label="Primary"
-        className="flex max-w-full items-center gap-4 rounded-full border border-zinc-200 bg-white/90 py-2 pl-4 pr-2 shadow-[0_1px_2px_rgba(0,0,0,0.06)] backdrop-blur sm:gap-6 dark:border-zinc-800 dark:bg-black/90"
+        className={cn(
+          "flex w-full items-center justify-between gap-2 rounded-full bg-transparent py-2 pl-4 pr-2 transition-all"
+        )}
       >
-        <Link href="#top" className="flex items-center gap-2.5">
+        <Link href="/" className="flex shrink-0 items-center gap-2.5" aria-label="Sync Music home">
           <Image
             src="/sync-logo.svg"
             alt="Sync logo"
@@ -43,118 +74,99 @@ export function SiteNav() {
             height={32}
             className="h-8 w-8 rounded-full"
           />
-          <span className="text-sm font-semibold tracking-tight">Sync</span>
+          <span className="text-sm font-semibold tracking-tight whitespace-nowrap">
+            Sync Music
+          </span>
         </Link>
 
-        <div className="hidden items-center gap-1 md:flex">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="rounded-full px-3 text-zinc-600 hover:text-zinc-950 dark:text-white dark:hover:bg-white/5 dark:hover:text-white"
-              >
-                Product <ChevronDown className="h-3.5 w-3.5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="center" className="w-72 rounded-xl p-1.5">
-              {FEATURE_LINKS.map((l) => (
-                <DropdownMenuItem key={l.title} asChild className="cursor-pointer">
-                  <Link
+        <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+          <NavigationMenu className="hidden md:block">
+            <NavigationMenuList>
+              {PLAIN_LINKS.map((l) => (
+                <NavigationMenuItem key={l.href}>
+                  <NavigationMenuLink
                     href={l.href}
-                    className="flex flex-col items-start gap-0.5 rounded-lg px-3 py-2.5"
+                    {...(l.external ? { target: "_blank", rel: "noreferrer" } : {})}
+                    className={cn(
+                      navigationMenuTriggerStyle(),
+                      "rounded-full bg-transparent text-zinc-600 hover:text-zinc-950 dark:text-white dark:hover:text-white"
+                    )}
                   >
-                    <span className="text-sm font-medium">{l.title}</span>
-                    <span className="text-xs text-zinc-500 dark:text-white">
-                      {l.desc}
-                    </span>
-                  </Link>
-                </DropdownMenuItem>
+                    {l.label}
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
               ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          {[
-            { href: "#commands", label: "Commands" },
-            { href: "#compare", label: "Compare" },
-            { href: "#faq", label: "FAQ" },
-          ].map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className="rounded-full px-3 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-white dark:hover:bg-white/5 dark:hover:text-white"
-            >
-              {l.label}
-            </Link>
-          ))}
-        </div>
+            </NavigationMenuList>
+          </NavigationMenu>
 
-        <div className="flex items-center gap-2">
-          <ModeToggle />
-          <Show when="signed-out">
-            <SignInButton mode="modal">
-              <Button variant="ghost" className="hidden rounded-full sm:inline-flex">
-                Sign in
-              </Button>
-            </SignInButton>
-          </Show>
-          <Show when="signed-in">
-            <span className="hidden sm:inline-flex">
+          <div className="flex shrink-0 items-center gap-2">
+            <Show when="signed-in">
               <UserButton />
-            </span>
-          </Show>
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="rounded-full md:hidden"
-                aria-label="Open menu"
-              >
-                <Menu className="h-4 w-4" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent
-              side="top"
-              aria-label="Menu"
-              className="inset-x-4 top-20 rounded-2xl border p-2 shadow-xl"
+            </Show>
+            <Show when="signed-out">
+              <SignInButton mode="modal">
+                <Button variant="ghost" className="hidden rounded-full sm:inline-flex">
+                  Sign in
+                </Button>
+              </SignInButton>
+            </Show>
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-full md:hidden"
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
+              aria-controls="mobile-menu"
+              onClick={() => setOpen((v) => !v)}
             >
-              <nav className="mt-10 flex flex-col gap-1" aria-label="Mobile">
-                {[
-                  { href: "#features", label: "Features" },
-                  { href: "#commands", label: "Commands" },
-                  { href: "#compare", label: "Compare" },
-                  { href: "#faq", label: "FAQ" },
-                ].map((l) => (
-                  <SheetClose asChild key={l.href}>
-                    <Link
-                      href={l.href}
-                      className="rounded-xl px-4 py-3 text-sm font-medium hover:bg-zinc-100 dark:hover:bg-white/5"
-                    >
-                      {l.label}
-                    </Link>
-                  </SheetClose>
-                ))}
-                <Show when="signed-out">
-                  <SheetClose asChild>
-                    <Link
-                      href="/sign-in"
-                      className="rounded-xl px-4 py-3 text-sm font-medium hover:bg-zinc-100 dark:hover:bg-white/5"
-                    >
-                      Sign in
-                    </Link>
-                  </SheetClose>
-                </Show>
-                <div className="p-2">
-                  <Button asChild className="w-full rounded-xl">
-                    <a href={INVITE_URL} target="_blank" rel="noreferrer">
-                      Add to Discord <ArrowUpRight className="h-4 w-4" />
-                    </a>
-                  </Button>
-                </div>
-              </nav>
-            </SheetContent>
-          </Sheet>
+              <MenuIcon size={16} animate={open ? "default" : undefined} />
+            </Button>
+          </div>
         </div>
       </nav>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            id="mobile-menu"
+            initial={{ opacity: 0, y: -8, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.98 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+            className="mt-2 w-full rounded-2xl border border-zinc-200 bg-white/95 p-2 shadow-xl backdrop-blur-sm md:hidden dark:border-zinc-800 dark:bg-[#0a0a0a]/95"
+          >
+            <nav className="flex flex-col gap-1" aria-label="Mobile">
+              {MOBILE_LINKS.map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  {...(l.external ? { target: "_blank", rel: "noreferrer" } : {})}
+                  onClick={() => setOpen(false)}
+                  className="rounded-xl px-4 py-3 text-sm font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                >
+                  {l.label}
+                </Link>
+              ))}
+              <Show when="signed-out">
+                <Link
+                  href="/sign-in"
+                  onClick={() => setOpen(false)}
+                  className="rounded-xl px-4 py-3 text-sm font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                >
+                  Sign in
+                </Link>
+              </Show>
+              <div className="p-2">
+                <Button asChild size="lg" className="h-11 w-full rounded-full px-7 hover:bg-zinc-800 dark:hover:bg-white">
+                  <a href="/invite" target="_blank" rel="noreferrer">
+                    Add to Discord <ArrowUpRight className="h-4 w-4" data-icon="inline-end" />
+                  </a>
+                </Button>
+              </div>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
