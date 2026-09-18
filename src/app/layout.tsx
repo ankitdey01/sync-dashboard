@@ -13,6 +13,7 @@ import { SiteNav } from "@/components/site/SiteNav";
 import { TapedFooter } from "@/components/ui/footer-taped-design";
 import { AppErrorBoundary } from "@/components/error-boundary";
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from '@vercel/analytics/next';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -96,6 +97,7 @@ export default function RootLayout({
         </ClerkProvider>
         </AppErrorBoundary>
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
