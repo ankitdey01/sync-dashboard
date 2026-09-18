@@ -66,14 +66,16 @@ const PLANS: Plan[] = [
   },
 ];
 
-export function Pricing() {
+export function Pricing({ fullLink = true, showHeading = true }: { fullLink?: boolean; showHeading?: boolean }) {
   return (
-    <section id="premium" className="mx-auto w-full max-w-6xl scroll-mt-24 px-5 py-16 sm:py-24">
+    <section id="pricing" className="mx-auto w-full max-w-6xl scroll-mt-24 px-5 py-16 sm:py-24">
+      {showHeading && (
       <SectionHeading
-        eyebrow="Premium"
-        title="Free forever. Pro when you're ready."
+        eyebrow="Pricing"
+        title="Free to start. Pro when you're ready."
         body="Everything below ships today on the free plan. Pro and Pro Plus are on the way,  same bot, more headroom."
       />
+      )}
       <div className="mt-10 grid justify-items-center gap-2 md:grid-cols-3">
         {PLANS.map((plan) => (
           <PricingCard.Card key={plan.name}>
@@ -118,6 +120,13 @@ export function Pricing() {
           </PricingCard.Card>
         ))}
       </div>
+      {fullLink && (
+        <p className="mt-8 text-center text-sm text-muted-foreground">
+          <a href="/pricing" className="underline underline-offset-4 hover:text-foreground">
+            Compare all features and pricing FAQs
+          </a>
+        </p>
+      )}
     </section>
   );
 }

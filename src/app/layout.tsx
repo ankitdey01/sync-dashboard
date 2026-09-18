@@ -1,6 +1,6 @@
 import {ClerkProvider} from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
-import type { Metadata } from "next";
+import { clerkAppearance } from "@/lib/clerk-appearance";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "@fontsource/nebula-sans/400.css";
 import "@fontsource/nebula-sans/500.css";
@@ -26,11 +26,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Sync, Discord Music Bot | 1,400+ Servers",
   description:
-    "Sync plays Spotify, YouTube, Apple Music and Deezer in your Discord voice channel. Queues, filters, playlists and button controls. Free forever.",
+    "Sync plays Spotify, YouTube, Apple Music and Deezer in your Discord voice channel. Queues, filters, playlists and button controls.",
   metadataBase: new URL("https://syncmusic.vercel.app"),
   icons: {
-    icon: "/logo.ico",
-    shortcut: "/logo.ico",
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
@@ -59,6 +59,10 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  themeColor: "#0a0a0a",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -70,7 +74,7 @@ export default function RootLayout({
     >
       <body className="flex min-h-full flex-col bg-white text-zinc-950 dark:bg-[#0a0a0a] dark:text-white">
         <AppErrorBoundary>
-        <ClerkProvider appearance={{ theme: dark }}>
+        <ClerkProvider appearance={clerkAppearance}>
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"
@@ -82,6 +86,11 @@ export default function RootLayout({
           <SiteNav />
           <main className="flex-1">{children}</main>
           <TapedFooter />
+          {/* Bottom blur margin - soft fade so first-paint and scrolled content melt into the page edge */}
+          <div
+            aria-hidden
+            className="pointer-events-none fixed inset-x-0 bottom-0 z-40 h-20 bg-gradient-to-t from-[#0a0a0a]/90 to-transparent backdrop-blur-sm [mask-image:linear-gradient(to_top,black_30%,transparent)]"
+          />
           </ThemeProvider>
         </ClerkProvider>
         </AppErrorBoundary>

@@ -49,7 +49,7 @@ export function TapedFooter() {
                 <Link className="text-zinc-500 whitespace-nowrap font-medium hover:text-zinc-900 dark:text-white dark:hover:text-white" href="/#commands">Commands</Link>
                 <Link className="text-zinc-500 whitespace-nowrap font-medium hover:text-zinc-900 dark:text-white dark:hover:text-white" href="/#compare">Compare</Link>
                 <Link className="text-zinc-500 whitespace-nowrap font-medium hover:text-zinc-900 dark:text-white dark:hover:text-white" href="/#faq">FAQ</Link>
-                <Link className="text-zinc-500 whitespace-nowrap font-medium hover:text-zinc-900 dark:text-white dark:hover:text-white" href="/#premium">Premium</Link>
+                <Link className="text-zinc-500 whitespace-nowrap font-medium hover:text-zinc-900 dark:text-white dark:hover:text-white" href="/pricing">Pricing</Link>
               </div>
             </div>
 

@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight, MessageCircle } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import {
   Avatar,
   AvatarFallback,
@@ -85,7 +84,7 @@ export function Hero({ stats }: { stats?: BotStats }) {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, delay: 0.08 }}
-            className="mt-6 text-4xl font-semibold tracking-tight text-balance sm:text-6xl sm:leading-[1.05]"
+            className="hd-h1 mt-6 text-4xl text-balance sm:text-6xl sm:leading-[1.05]"
           >
             <RevealText text="Music for your Discord, without the drama." />
           </motion.h1>
@@ -111,23 +110,20 @@ export function Hero({ stats }: { stats?: BotStats }) {
               href="/invite"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex h-11 w-full shrink-0 items-center justify-center gap-2 rounded-full bg-zinc-950 px-7 text-sm font-medium whitespace-nowrap text-white transition-all select-none hover:bg-zinc-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-500 sm:w-auto dark:bg-zinc-200 dark:text-zinc-950 dark:hover:bg-white"
+              className="hd-btn hd-btn-primary w-full sm:w-auto"
             >
               Add to Discord
-              <ArrowUpRight className="h-4 w-4" />
+              <ArrowUpRight className="h-[15px] w-[15px]" aria-hidden />
             </a>
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="h-11 w-full rounded-full border-2 px-7 backdrop-blur-[2px] sm:w-auto dark:bg-[#0a0a0a] dark:hover:bg-zinc-900"
+            <Link
+              href="/support"
+              target="_blank"
+              rel="noreferrer"
+              className="hd-btn hd-btn-ghost w-full backdrop-blur-[2px] sm:w-auto"
             >
-              <Link href="/support" target="_blank" rel="noreferrer">
-                <span className="flex w-full items-center justify-center gap-2">
-                  <MessageCircle className="h-4 w-4" /> Support Server
-                </span>
-              </Link>
-            </Button>
+              Support Server
+              <MessageCircle className="h-[15px] w-[15px]" aria-hidden />
+            </Link>
           </motion.div>
         </div>
 

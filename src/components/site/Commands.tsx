@@ -73,9 +73,9 @@ export function Commands() {
   return (
     <section
       id="commands"
-      className="scroll-mt-24 border-y border-zinc-200 bg-zinc-50 py-16 sm:py-24 dark:border-zinc-800 dark:bg-[#0a0a0a]"
+      className="hd-section scroll-mt-24 py-16 sm:py-24 dark:bg-[#0a0a0a]"
     >
-      <div className="mx-auto w-full max-w-6xl px-4 sm:px-5">
+      <div className="hd-container w-full">
         <div className="flex flex-col gap-6">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <SectionHeading
@@ -161,12 +161,16 @@ export function Commands() {
           </div>
         </div>
 
-        {/* Desktop: sidebar nav + panel */}
-        <div className="mt-8 hidden gap-6 md:grid md:grid-cols-[248px_minmax(0,1fr)]">
+        {/* Desktop: sidebar rail + panel — Workflow_navigation echo */}
+        <div className="mt-8 hidden gap-10 md:grid md:grid-cols-[260px_minmax(0,1fr)]">
           <nav
             aria-label="Command groups"
-            className="sticky top-24 flex flex-col gap-1 self-start"
+            className="sticky top-24 flex flex-col self-start"
           >
+            <p className="px-4 pb-3 text-[28.7px] font-medium tracking-[-1.05px] text-[#e7e7e7]">
+              From first /play
+              <span className="block text-[#949494]">to full queue.</span>
+            </p>
             {COMMAND_GROUPS.map((g) => {
               const isActive = active === g.id;
               return (
@@ -175,29 +179,28 @@ export function Commands() {
                   type="button"
                   onClick={() => setActive(g.id)}
                   aria-current={isActive ? "true" : undefined}
+                  data-active={isActive}
                   className={cn(
-                    "group flex w-full items-start gap-3 rounded-xl border px-3 py-3 text-left transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/30",
-                    isActive
-                      ? "border-border bg-background shadow-xs"
-                      : "border-transparent hover:border-border hover:bg-background/60"
+                    "hd-rail group flex w-full items-start gap-3 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring/40",
+                    isActive && "bg-white/[0.02]"
                   )}
                 >
                   <span
                     className={cn(
-                      "mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg border",
+                      "mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-[3px] border",
                       isActive
-                        ? "border-zinc-950 bg-zinc-950 text-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
-                        : "border-border bg-muted text-muted-foreground group-hover:text-foreground"
+                        ? "border-[rgba(231,231,231,0.25)] bg-[#e7e7e7] text-[#242424]"
+                        : "border-[rgba(231,231,231,0.1)] bg-transparent text-[#777] group-hover:text-[#e4e4e4]"
                     )}
                   >
                     <GroupIcon id={g.id} className="size-4" />
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="flex items-center gap-2">
-                      <span className="text-sm font-medium">{g.label}</span>
-                      <Badge variant="secondary">{g.commands.length}</Badge>
+                      <span className="text-[17px] leading-[23.8px] font-normal">{g.label}</span>
+                      <Badge variant="secondary" className="rounded-[2px]">{g.commands.length}</Badge>
                     </span>
-                    <span className="mt-0.5 block text-xs leading-5 text-muted-foreground">
+                    <span className="mt-0.5 block text-[13px] leading-[18.2px] text-[#999]">
                       {g.blurb}
                     </span>
                   </span>
@@ -205,8 +208,8 @@ export function Commands() {
               );
             })}
 
-            <div className="mt-3 rounded-xl border border-dashed border-border p-3">
-              <p className="text-xs leading-5 text-muted-foreground">
+            <div className="mt-3 rounded-[3px] border border-dashed border-[rgba(231,231,231,0.15)] p-3">
+              <p className="text-xs leading-5 text-[#949494]">
                 Tip: tap any command to copy it. Paste straight into Discord.
               </p>
             </div>
@@ -238,9 +241,9 @@ function GroupCard({
   const group = COMMAND_GROUPS.find((g) => g.id === groupId)!;
 
   return (
-    <Card className="overflow-hidden border-zinc-200 bg-white py-0 dark:border-zinc-800 dark:bg-[#0a0a0a]">
-      <CardHeader className="flex flex-row items-start gap-3 border-b px-4 py-4 sm:px-5">
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-zinc-950 text-white dark:bg-zinc-800 dark:text-white">
+    <Card className="hd-card overflow-hidden !rounded-[4px] py-0 dark:bg-[#0a0a0a]">
+      <CardHeader className="flex flex-row items-start gap-3 border-b border-[rgba(231,231,231,0.1)] px-4 py-4 sm:px-5">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-[3px] bg-[#e7e7e7] text-[#242424]">
           <GroupIcon id={group.id} className="size-4" />
         </span>
         <div className="min-w-0 flex-1">

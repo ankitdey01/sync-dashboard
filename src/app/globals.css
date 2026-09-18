@@ -184,6 +184,23 @@ body {
       transparent);
 }
 
+/* Orbit stage: soften the hard-cropped side items on phones only.
+   Desktop and tablets render the full stage and stay untouched. */
+@media (max-width: 639px) {
+  .orbit-edge-fade {
+    mask-image: linear-gradient(to right,
+        transparent,
+        black 12%,
+        black 88%,
+        transparent);
+    -webkit-mask-image: linear-gradient(to right,
+        transparent,
+        black 12%,
+        black 88%,
+        transparent);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
 
   .marquee-track,
@@ -194,6 +211,152 @@ body {
   html {
     scroll-behavior: auto;
   }
+}
+
+/* ---- Inspiration blend (Raindrop editorial) — bg untouched, only tokens/type/hairlines ---- */
+:root {
+  --hd-text: #e7e7e7;
+  --hd-body: #b1b1b1;
+  --hd-muted: #949494;
+  --hd-faint: #777777;
+  --hd-line: rgba(231, 231, 231, 0.1);
+  --hd-line-strong: rgba(231, 231, 231, 0.19);
+  --hd-badge-line: rgba(231, 231, 231, 0.15);
+  --hd-cta: #c6c6c6;
+  --hd-cta-ink: #242424;
+  --hd-rail-active: #b6c5ca;
+  --hd-container: 1280px;
+}
+
+.hd-container {
+  width: 100%;
+  max-width: var(--hd-container);
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .hd-container {
+    padding-inline: 2rem;
+  }
+}
+
+/* Tight editorial headings like hierarchy-title / workflow-heading */
+.hd-h1 {
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1.16;
+  color: var(--hd-text);
+  text-wrap: balance;
+}
+
+.hd-h2 {
+  font-weight: 500;
+  letter-spacing: -0.036em;
+  line-height: 1.27;
+  color: var(--hd-text);
+  text-wrap: balance;
+}
+
+.hd-body {
+  letter-spacing: -0.025em;
+  line-height: 1.65;
+  color: var(--hd-body);
+}
+
+.hd-muted {
+  color: var(--hd-muted);
+  letter-spacing: -0.025em;
+}
+
+/* Hairline section divider used across workflow / pricing / customers */
+.hd-section {
+  border-top: 1px solid var(--hd-line);
+}
+
+/* Announcement badge: bordered chip + two-tone text + arrow */
+.hd-announce {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  border-radius: 4px;
+}
+
+.hd-announce-badge {
+  border: 1px solid var(--hd-badge-line);
+  border-radius: 2px;
+  padding: 3px 6px;
+  font-size: 10px;
+  line-height: 15px;
+  color: var(--hd-muted);
+}
+
+.hd-announce-text {
+  font-size: 12px;
+  letter-spacing: -0.033em;
+  display: flex;
+  gap: 9px;
+}
+
+/* Sharp devtool CTAs: 3px radius, 42px min-height */
+.hd-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 11px 18px;
+  border-radius: 3px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.028em;
+  border: 1px solid transparent;
+  transition: filter 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.hd-btn-primary {
+  background: var(--hd-cta);
+  border-color: var(--hd-cta);
+  color: var(--hd-cta-ink);
+}
+
+.hd-btn-primary:hover {
+  filter: brightness(1.08);
+}
+
+.hd-btn-ghost {
+  border-color: var(--hd-line-strong);
+  color: var(--hd-text);
+  background: transparent;
+}
+
+.hd-btn-ghost:hover {
+  border-color: rgba(231, 231, 231, 0.35);
+}
+
+/* Left-rail nav item like Detect/Trace */
+.hd-rail {
+  border-left: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 12px 0 12px 16px;
+  color: var(--hd-faint);
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.hd-rail[data-active="true"] {
+  border-left-color: var(--hd-rail-active);
+  color: #e4e4e4;
+}
+
+/* Sharp cards: 3-4px, hairline */
+.hd-card {
+  border: 1px solid var(--hd-line);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.01);
+}
+
+/* Logo strip: muted label + low-opacity row */
+.hd-logo-row {
+  opacity: 0.53;
 }
 
 /* Thin scrollbars for command panels */

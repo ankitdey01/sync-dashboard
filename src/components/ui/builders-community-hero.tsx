@@ -229,11 +229,15 @@ export default function CommunityOrbit({
   );
 
   // Taille fixe au départ, on la réduit ensuite pour rentrer dans le cadre.
+  // Sur téléphone, on recule de 10% pour garder les stats des bords visibles.
   useLayoutEffect(() => {
     const frame = frameRef.current;
     if (!frame) return;
-    const measure = () =>
-      setScale(Math.min(1, Math.max(minScale, frame.clientWidth / STAGE_W)));
+    const measure = () => {
+      const fit = Math.min(1, Math.max(minScale, frame.clientWidth / STAGE_W));
+      const isPhone = window.matchMedia('(max-width: 639px)').matches;
+      setScale(isPhone ? fit * 0.9 : fit);
+    };
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(frame);
@@ -246,7 +250,7 @@ export default function CommunityOrbit({
     >
       <div
         ref={frameRef}
-        className="pointer-events-none relative mx-auto w-full max-w-[1200px] overflow-hidden"
+        className="orbit-edge-fade pointer-events-none relative mx-auto w-full max-w-[1200px] overflow-hidden"
         style={{ height: STAGE_H * scale }}
       >
         <div

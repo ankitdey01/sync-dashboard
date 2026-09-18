@@ -35,7 +35,7 @@ export function FinalCta() {
             height={48}
             className="mx-auto h-12 w-12 rounded-full"
           />
-          <h2 className="mx-auto mt-5 max-w-md text-2xl font-semibold tracking-tight text-white text-balance sm:text-3xl">
+          <h2 className="mx-auto mt-5 max-w-md text-[24px] font-semibold tracking-tight text-white text-balance sm:text-3xl">
             Your voice channel is quiet. Fix that tonight.
           </h2>
           <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-white">

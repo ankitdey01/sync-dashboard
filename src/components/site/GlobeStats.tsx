@@ -82,16 +82,6 @@ export function GlobeStats() {
             title="Listeners all around the world."
             body="Sync plays in voice channels across India, the US, Canada, Australia, the Gulf, and Southeast Asia. One invite, music in seconds."
           />
-          <ul className="mt-8 flex flex-wrap gap-2">
-            {REGIONS.map((r) => (
-              <li
-                key={r.id}
-                className="rounded-full border border-zinc-200 bg-white px-3 py-1.5 font-mono text-xs text-zinc-600 dark:border-zinc-800 dark:bg-[#0a0a0a] dark:text-white"
-              >
-                {r.label}
-              </li>
-            ))}
-          </ul>
           <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-zinc-600 dark:text-white">
             <span className="flex items-center gap-1.5">
               <ShieldCheck className="h-4 w-4" /> Isolated per-guild queues

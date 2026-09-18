@@ -23,7 +23,7 @@ const PLAIN_LINKS: NavLink[] = [
   { href: "/#commands", label: "Commands" },
   { href: "/#compare", label: "Compare" },
   { href: "/#faq", label: "FAQ" },
-  { href: "/#premium", label: "Premium" },
+  { href: "/pricing", label: "Pricing" },
   { href: "/support", label: "Support", external: true },
 ];
 
@@ -32,7 +32,7 @@ const MOBILE_LINKS: NavLink[] = [
   { href: "/#commands", label: "Commands" },
   { href: "/#compare", label: "Compare" },
   { href: "/#faq", label: "FAQ" },
-  { href: "/#premium", label: "Premium" },
+  { href: "/pricing", label: "Pricing" },
   { href: "/support", label: "Support server", external: true },
 ];
 
@@ -59,7 +59,7 @@ export function SiteNav() {
   }, []);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4">
+    <header className="fixed inset-x-0 top-0 z-50 bg-[#0a0a0a] px-4">
       <nav
         aria-label="Primary"
         className={cn(
@@ -157,11 +157,15 @@ export function SiteNav() {
                 </Link>
               </Show>
               <div className="p-2">
-                <Button asChild size="lg" className="h-11 w-full rounded-full px-7 hover:bg-zinc-800 dark:hover:bg-white">
-                  <a href="/invite" target="_blank" rel="noreferrer">
-                    Add to Discord <ArrowUpRight className="h-4 w-4" data-icon="inline-end" />
-                  </a>
-                </Button>
+                <a
+                  href="/invite"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hd-btn hd-btn-primary w-full"
+                >
+                  Add to Discord
+                  <ArrowUpRight className="h-[15px] w-[15px]" aria-hidden />
+                </a>
               </div>
             </nav>
           </motion.div>
