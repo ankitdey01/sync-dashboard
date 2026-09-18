@@ -96,7 +96,7 @@ export function Hero({ stats }: { stats?: BotStats }) {
             className="mt-5 max-w-xl text-base leading-7 text-zinc-950 sm:text-lg dark:text-white"
           >
             Sync plays your music in seconds.
-            Trusted in 1,400+ servers with queues, filters and playlists
+            Trusted in {serverLabel} servers with queues, filters and playlists
             your members already know how to use.
           </motion.p>
 

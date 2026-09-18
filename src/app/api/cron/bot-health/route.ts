@@ -14,9 +14,12 @@ export async function GET(req: Request) {
 
   const healthUrl = process.env.BOT_HEALTH_URL;
   const alertWebhook = process.env.BOT_ALERT_WEBHOOK_URL;
-  if (!healthUrl || !alertWebhook) {
-    console.warn("[bot-health] BOT_HEALTH_URL or BOT_ALERT_WEBHOOK_URL missing");
-    return Response.json({ checked: false, reason: "webhook env not configured" });
+  if (!healthUrl) {
+    console.warn("[bot-health] BOT_HEALTH_URL missing");
+    return Response.json(
+      { checked: false, reason: "BOT_HEALTH_URL not configured" },
+      { status: 500 }
+    );
   }
 
   let online = false;
@@ -35,23 +38,41 @@ export async function GET(req: Request) {
     detail = err instanceof Error ? err.message : "fetch failed";
   }
 
+  let alert = "not-sent";
   if (!online) {
-    const ping = process.env.ALERT_USER_ID ? `<@${process.env.ALERT_USER_ID}>` : "";
-    await fetch(alertWebhook, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...(ping ? { content: ping } : {}),
-        embeds: [
-          {
-            title: "🔴 Music bot offline",
-            description: `Health check failed at <t:${Math.floor(Date.now() / 1000)}:F>.\n${detail}`,
-            color: 0xff0000,
-          },
-        ],
-      }),
-    }).catch(() => {});
+    if (!alertWebhook) {
+      alert = "skipped (BOT_ALERT_WEBHOOK_URL unset)";
+      console.warn("[bot-health] bot offline but alert webhook unset - notification skipped");
+    } else {
+      const ping = process.env.ALERT_USER_ID ? `<@${process.env.ALERT_USER_ID}>` : "";
+      try {
+        const alertRes = await fetch(alertWebhook, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...(ping ? { content: ping } : {}),
+            embeds: [
+              {
+                title: "🔴 Music bot offline",
+                description: `Health check failed at <t:${Math.floor(Date.now() / 1000)}:F>.\n${detail}`,
+                color: 0xff0000,
+              },
+            ],
+          }),
+          signal: AbortSignal.timeout(10_000),
+        });
+        if (!alertRes.ok) {
+          alert = `failed (HTTP ${alertRes.status})`;
+          console.error(`[bot-health] Discord alert rejected: HTTP ${alertRes.status}`);
+        } else {
+          alert = "sent";
+        }
+      } catch (err) {
+        alert = `failed (${err instanceof Error ? err.message : "network error"})`;
+        console.error("[bot-health] Discord alert error:", err instanceof Error ? err.message : err);
+      }
+    }
   }
 
-  return Response.json({ online, detail });
+  return Response.json({ online, detail, alert });
 }

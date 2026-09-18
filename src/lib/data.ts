@@ -23,7 +23,7 @@ export const FEATURES: Feature[] = [
   {
     icon: "Play",
     title: "Multi-platform playback",
-    body: "YouTube, Spotify, Apple Music, Deezer and Facebook through one stable Lavalink pipeline. No dead links.",
+    body: "Multi-platform playback through one stable Lavalink pipeline. No dead links.",
   },
   {
     icon: "ListMusic",
@@ -144,6 +144,6 @@ export const FAQS = [
   },
   {
     q: "Can I trust it in a 10k-member server?",
-    a: "Sync already serves 1,400+ servers with per-guild queues, DJ-safe button controls and permission-aware commands. Mods keep full control of who can skip, clear or change filters.",
+    a: "Sync already serves 1,400+ servers and 100K+ users across.",
   },
 ] as const;

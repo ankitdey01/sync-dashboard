@@ -24,10 +24,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Sync, Discord Music Bot | 1,400+ Servers",
+  title: "Sync, Discord Music Bot",
   description:
-    "Sync plays Spotify, YouTube, Apple Music and Deezer in your Discord voice channel. Queues, filters, playlists and button controls.",
-  metadataBase: new URL("https://syncmusic.vercel.app"),
+    "Sync plays music right inside your Discord Server. Queues, filters, playlists and button controls.",
+  metadataBase: new URL("https://thesyncmusic.vercel.app"),
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
@@ -89,7 +89,7 @@ export default function RootLayout({
           {/* Bottom blur margin - soft fade so first-paint and scrolled content melt into the page edge */}
           <div
             aria-hidden
-            className="pointer-events-none fixed inset-x-0 bottom-0 z-40 h-20 bg-gradient-to-t from-[#0a0a0a]/90 to-transparent backdrop-blur-sm [mask-image:linear-gradient(to_top,black_30%,transparent)]"
+            className="pointer-events-none fixed inset-x-0 bottom-0 z-40 h-28 bg-gradient-to-t from-[#0a0a0a]/90 to-transparent backdrop-blur-sm [mask-image:linear-gradient(to_top,black,transparent)]"
           />
           </ThemeProvider>
         </ClerkProvider>

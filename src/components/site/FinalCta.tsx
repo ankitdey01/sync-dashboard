@@ -2,6 +2,7 @@
 
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Grainient from "@/components/site/Grainient";
 import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
@@ -58,7 +59,7 @@ export function FinalCta() {
               variant="outline"
               className="rounded-full border-zinc-500 bg-transparent text-white hover:bg-transparent hover:text-white"
             >
-              <a href="#commands">Browse commands first</a>
+              <Link href="/#commands">Browse commands first</Link>
             </Button>
           </div>
         </div>

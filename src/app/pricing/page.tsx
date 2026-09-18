@@ -44,7 +44,7 @@ const PRICING_FAQS = [
   },
   {
     q: "What does voting on Top.gg unlock?",
-    a: "Votes unlock priority queue handling on busy nodes. Playback, queues, filters, and playlists stay free, voting just buys headroom when nodes are packed.",
+    a: "Votes remove your daily free-play limits, so the music never stops. Playback, queues, filters, and playlists stay free for everyone; priority queue handling on packed nodes arrives with the paid plans.",
   },
   {
     q: "Will my setup carry over if I upgrade later?",
