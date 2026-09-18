@@ -9,17 +9,40 @@ import type { BotStats, TopServer } from "@/lib/stats-shared";
 async function get<T>(path: string): Promise<T | null> {
   const base = process.env.STATS_API_URL;
   const key = process.env.STATS_API_KEY;
-  if (!base || !key) return null;
+  const maskedKey = key ? `${key.slice(0, 2)}xxxx` : "missing";
+
+  console.log("[StatsAPI] config", {
+    base: base || "missing",
+    key: maskedKey,
+  });
+
+  if (!base || !key) {
+    console.error("[StatsAPI] missing STATS_API_URL or STATS_API_KEY");
+    return null;
+  }
+
   try {
-    const res = await fetch(`${base}${path}`, {
+    const url = `${base}${path}`;
+    const res = await fetch(url, {
       headers: { Authorization: `Bearer ${key}` },
       // Never let a slow/hanging API stall page render: fall back instead.
       signal: AbortSignal.timeout(8000),
       next: { revalidate: 3600 },
     });
+
+    console.log("[StatsAPI] response", {
+      path,
+      status: res.status,
+      ok: res.ok,
+    });
+
     if (!res.ok) return null;
     return (await res.json()) as T;
-  } catch {
+  } catch (error) {
+    console.error("[StatsAPI] fetch failed", {
+      path,
+      error: error instanceof Error ? error.message : String(error),
+    });
     return null;
   }
 }
