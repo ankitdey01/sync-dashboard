@@ -12,6 +12,7 @@ import { Preloader } from "@/components/site/Preloader";
 import { SiteNav } from "@/components/site/SiteNav";
 import { TapedFooter } from "@/components/ui/footer-taped-design";
 import { AppErrorBoundary } from "@/components/error-boundary";
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -94,6 +95,7 @@ export default function RootLayout({
           </ThemeProvider>
         </ClerkProvider>
         </AppErrorBoundary>
+        <SpeedInsights />
       </body>
     </html>
   );
